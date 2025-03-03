@@ -1,15 +1,6 @@
 // tests/index.test.ts
-// import { helloWorld } from "../src/";
 
-// describe('helloWorld function', () => {
-//   describe('in scenario A', () => {
-//     it('should return a hello message', () => {
-//       expect(helloWorld()).toBe('Hello, world!');
-//     });
-//   })
-// });
-
-import { Universe, Seed } from '../src/';
+import { Universe, Seed, Cell } from '../src/';
 
 describe('A universe is always started with a seed that will introduce the living cells during the Universe Time.', () => {
   describe('When the universe is created the living cells are the same as the Seed ones', () => {
@@ -18,6 +9,18 @@ describe('A universe is always started with a seed that will introduce the livin
       const emptyUniverse = new Universe(emptySeed);
       expect(emptyUniverse.livingCells()).toStrictEqual(
         emptySeed.livingCells()
+      );
+    });
+    it('Seed with living cells will create Universe with living cells', () => {
+      const seedWithLivingCells = new Seed();
+      seedWithLivingCells.addLivingCells(
+        new Cell(0, 1),
+        new Cell(3, 4),
+        new Cell(3, 3)
+      );
+      const universeWithLivingCells = new Universe(seedWithLivingCells);
+      expect(universeWithLivingCells.livingCells()).toStrictEqual(
+        seedWithLivingCells.livingCells()
       );
     });
   });
