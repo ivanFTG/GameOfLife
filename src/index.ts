@@ -1,9 +1,4 @@
 // src/index.ts
-// export function helloWorld(): string {
-//   return "Hello, world!";
-// };
-
-// console.log(helloWorld());
 
 export class Universe {
   cells: Cell[];
@@ -11,8 +6,15 @@ export class Universe {
     this.cells = seed.livingCells();
   }
 
+  tick() {
+  }
+
   livingCells(): Cell[] {
     return this.cells;
+  }
+
+  numberOfLivingCells(): number {
+    return 0;
   }
 }
 

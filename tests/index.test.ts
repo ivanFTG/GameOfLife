@@ -25,3 +25,15 @@ describe('A universe is always started with a seed that will introduce the livin
     });
   });
 });
+
+describe('A Universe with living cells will change during the ticks of Time', () => {
+  describe('When the time starts (ticks) to pass on the universe the life of cells start to happen', () => {
+    it('A Universe with one cell will die after the first tick of time', () => {
+      const seedWithLivingCells = new Seed();
+      seedWithLivingCells.addLivingCells(new Cell(0, 0));
+      const universeWithLivingCells = new Universe(seedWithLivingCells);
+      universeWithLivingCells.tick();
+      expect(universeWithLivingCells.numberOfLivingCells()).toStrictEqual(0);
+    });
+  });
+});
