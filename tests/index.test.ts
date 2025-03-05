@@ -45,5 +45,15 @@ describe('A Universe with living cells will change during the ticks of Time', ()
       universe.tick();
       expect(universe.numberOfLivingCells()).toStrictEqual(0);
     });
+    it('Any live cell with two or three live neighbours lives on to the next generation', () => {
+      const seed = new Seed();
+      const cell = new Cell(0, 0);
+      const neighbours = [new Cell(1, 1), new Cell(0, -1)];
+      seed.addLivingCells(cell);
+      seed.addLivingCells(...neighbours);
+      const universe = new Universe(seed);
+      universe.tick();
+      expect(universe.numberOfLivingCells()).toStrictEqual(1);
+    });
   });
 });
