@@ -53,17 +53,46 @@ describe('A Universe with living cells will change during the ticks of Time', ()
       seed.addLivingCells(...neighbours);
       const universe = new Universe(seed);
       universe.tick();
-      expect(universe.numberOfLivingCells()).toStrictEqual(1);
+      expect(universe.findLivingCellIndexFor(cell)).toBeGreaterThan(-1);
     });
     it('Any live cell with more than three live neighbours dies, as if by overpopulation', () => {
       const seed = new Seed();
       const cell = new Cell(0, 0);
-      const neighbour = [new Cell(1, 1), new Cell(-1, -1), new Cell(-1, 1), new Cell(1, -1)];
+      const neighbour = [
+        new Cell(1, 1),
+        new Cell(-1, -1),
+        new Cell(-1, 1),
+        new Cell(1, -1),
+      ];
       seed.addLivingCells(cell);
       seed.addLivingCells(...neighbour);
       const universe = new Universe(seed);
       universe.tick();
       expect(universe.livingCells().indexOf(cell)).toStrictEqual(-1);
+    });
+    it('Any live cell with more than three live neighbours dies, as if by overpopulation', () => {
+      const seed = new Seed();
+      const cell = new Cell(0, 0);
+      const neighbour = [
+        new Cell(1, 1),
+        new Cell(-1, -1),
+        new Cell(-1, 1),
+        new Cell(1, -1),
+      ];
+      seed.addLivingCells(cell);
+      seed.addLivingCells(...neighbour);
+      const universe = new Universe(seed);
+      universe.tick();
+      expect(universe.livingCells().indexOf(cell)).toStrictEqual(-1);
+    });
+    it('Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.', () => {
+      const seed = new Seed();
+      const deadCell = new Cell(0, 0);
+      const neighbours = [new Cell(1, 1), new Cell(0, 1), new Cell(-1, 1)];
+      seed.addLivingCells(...neighbours);
+      const universe = new Universe(seed);
+      universe.tick();
+      expect(universe.findLivingCellIndexFor(deadCell)).toBeGreaterThan(-1);
     });
   });
 });

@@ -2,12 +2,19 @@
 
 export class Universe {
   cells: Cell[];
+  private universeMaxX = 0;
+  private universeMaxY = 0;
+  private universeMinX = 0;
+  private universeMinY = 0;
+
   constructor(seed: Seed) {
     this.cells = seed.livingCells();
+    this.calculateUniverseSize();
   }
 
   tick() {
     this.markCellsToDie();
+    this.reLiveCells();
     this.killCells();
   }
 
@@ -19,21 +26,62 @@ export class Universe {
     return this.cells.length;
   }
 
-  private markCellsToDie() {
-    this.cells.forEach((cell) => {
-      if (
-        this.numberOfNeighbours(cell) < 2 ||
-        this.numberOfNeighbours(cell) > 3
-      ) {
-        cell.shouldDie = true;
-      }
+  calculateUniverseSize() {
+    this.universeMaxX =
+      Math.max(...this.cells.map((cell) => cell.xPosition)) + 1;
+    this.universeMaxY =
+      Math.max(...this.cells.map((cell) => cell.yPosition)) + 1;
+    this.universeMinX =
+      Math.min(...this.cells.map((cell) => cell.xPosition)) - 1;
+    this.universeMinY =
+      Math.min(...this.cells.map((cell) => cell.yPosition)) - 1;
+  }
+
+  findLivingCellIndexFor(cell: Cell): number {
+    return this.livingCells().findIndex((livingCell) => {
+      return livingCell.equalsTo(cell);
     });
+  }
+
+  private markCellsToDie() {
+    this.livingCells().forEach((cell) => {
+      const neighbours = this.numberOfNeighbours(cell);
+      cell.shouldDie = this.shouldCellDie(neighbours);
+    });
+  }
+
+  private shouldCellDie(numberOfNeighbours: number): boolean {
+    return numberOfNeighbours < 2 || numberOfNeighbours > 3;
+  }
+
+  private shouldCellRelive(numberOfNeighbours: number): boolean {
+    return numberOfNeighbours == 3;
   }
 
   private killCells() {
     this.cells = this.cells.filter((cell) => {
       return !cell.shouldDie;
     });
+  }
+
+  private reLiveCells() {
+    const deadCells: Cell[] = [];
+    for (let x = this.universeMinX; x <= this.universeMaxX; x++) {
+      for (let y = this.universeMinY; y <= this.universeMaxY; y++) {
+        const possibleDeadCell = new Cell(x, y);
+        const indexOfCell = this.findLivingCellIndexFor(possibleDeadCell);
+        if (indexOfCell == -1) {
+          deadCells.push(possibleDeadCell);
+        }
+      }
+    }
+    deadCells.forEach((cell) => {
+      const neighbours = this.numberOfNeighbours(cell);
+      if (this.shouldCellRelive(neighbours)) {
+        this.cells.push(cell);
+      }
+    });
+    this.calculateUniverseSize();
   }
 
   private numberOfNeighbours(cell: Cell): number {
@@ -84,11 +132,12 @@ export class Cell {
     ];
     return (
       neighbours.findIndex((neighbour) => {
-        return (
-          neighbour.xPosition == cell.xPosition &&
-          neighbour.yPosition == cell.yPosition
-        );
+        return neighbour.equalsTo(cell);
       }) >= 0
     );
+  }
+
+  equalsTo(cell: Cell) {
+    return this.xPosition == cell.xPosition && this.yPosition == cell.yPosition;
   }
 }
