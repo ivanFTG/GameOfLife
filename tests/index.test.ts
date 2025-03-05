@@ -55,5 +55,15 @@ describe('A Universe with living cells will change during the ticks of Time', ()
       universe.tick();
       expect(universe.numberOfLivingCells()).toStrictEqual(1);
     });
+    it('Any live cell with more than three live neighbours dies, as if by overpopulation', () => {
+      const seed = new Seed();
+      const cell = new Cell(0, 0);
+      const neighbour = [new Cell(1, 1), new Cell(-1, -1), new Cell(-1, 1), new Cell(1, -1)];
+      seed.addLivingCells(cell);
+      seed.addLivingCells(...neighbour);
+      const universe = new Universe(seed);
+      universe.tick();
+      expect(universe.livingCells().indexOf(cell)).toStrictEqual(-1);
+    });
   });
 });

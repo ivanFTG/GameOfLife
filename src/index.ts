@@ -21,7 +21,10 @@ export class Universe {
 
   private markCellsToDie() {
     this.cells.forEach((cell) => {
-      if (this.numberOfNeighbours(cell) < 2) {
+      if (
+        this.numberOfNeighbours(cell) < 2 ||
+        this.numberOfNeighbours(cell) > 3
+      ) {
         cell.shouldDie = true;
       }
     });
