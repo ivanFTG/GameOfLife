@@ -29,11 +29,21 @@ describe('A universe is always started with a seed that will introduce the livin
 describe('A Universe with living cells will change during the ticks of Time', () => {
   describe('When the time starts (ticks) to pass on the universe the life of cells start to happen', () => {
     it('A Universe with one cell will die after the first tick of time', () => {
-      const seedWithLivingCells = new Seed();
-      seedWithLivingCells.addLivingCells(new Cell(0, 0));
-      const universeWithLivingCells = new Universe(seedWithLivingCells);
-      universeWithLivingCells.tick();
-      expect(universeWithLivingCells.numberOfLivingCells()).toStrictEqual(0);
+      const seed = new Seed();
+      seed.addLivingCells(new Cell(0, 0));
+      const universe = new Universe(seed);
+      universe.tick();
+      expect(universe.numberOfLivingCells()).toStrictEqual(0);
+    });
+    it('Any live cell with fewer than two live neighbours dies, as if by underpopulation', () => {
+      const seed = new Seed();
+      const cell = new Cell(0, 0);
+      const neighBours = [new Cell(1, 1)];
+      seed.addLivingCells(cell);
+      seed.addLivingCells(...neighBours);
+      const universe = new Universe(seed);
+      universe.tick();
+      expect(universe.numberOfLivingCells()).toStrictEqual(0);
     });
   });
 });
